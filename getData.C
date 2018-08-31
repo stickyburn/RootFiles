@@ -4,7 +4,7 @@ using namespace std;
 
 void getData(){
     //Opening files sequencially due to gDirect change.
-    TFile* fileS = new TFile("./RootFiles/hist-RSG_C10_M1300-0.root");
+    TFile* fileS = new TFile("./RootFiles/hist-RSG_C10_M3000-0.root");
     TList* signalList = (TList*)gDirectory->GetListOfKeys();
     signalList->Sort();
 
