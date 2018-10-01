@@ -4,7 +4,7 @@ using namespace std;
 
 void getData(){
     //Opening files sequencially due to gDirect change.
-    TFile* fileS = new TFile("./RootFiles/hist-RSG_C10_M3000-0.root");
+    TFile* fileS = new TFile("./RootFiles/hist-RSG_C10_M1000-0.root");
     TList* signalList = (TList*)gDirectory->GetListOfKeys();
     signalList->Sort();
 
@@ -68,31 +68,34 @@ void getData(){
         TString backString(backList->At(j)->GetName());
 
         if(backString.Contains("2tag")){
+             if(backString.Contains("PreSel") && backString.Contains("PostDEtaCut")
+            && backString.Contains("deltaR")){
+                    back2Tag[j] = (TH1*)fileB->Get(backList->At(j)->GetName())->Clone("back2Tag");
+                    backEntries[backIndex] = back2Tag[j]->GetEntries();
+                    backIndex++;
+                }
             if(backString.Contains("PreSel") && backString.Contains("PostDRCut")
             && backString.Contains("deltaR")){
                     back2Tag[j] = (TH1*)fileB->Get(backList->At(j)->GetName())->Clone("back2Tag");
                     backEntries[backIndex] = back2Tag[j]->GetEntries();
                     backIndex++;
                 }
-            if(backString.Contains("PreSel") && backString.Contains("PostDEtaCut")
+
+                 if(backString.Contains("SR") && backString.Contains("PostEllipseCut")
             && backString.Contains("deltaR")){
                     back2Tag[j] = (TH1*)fileB->Get(backList->At(j)->GetName())->Clone("back2Tag");
                     backEntries[backIndex] = back2Tag[j]->GetEntries();
                     backIndex++;
                 }
-            if(backString.Contains("SR") && backString.Contains("PostnBTagTJCut")
-            && backString.Contains("deltaR")){
-                    back2Tag[j] = (TH1*)fileB->Get(backList->At(j)->GetName())->Clone("back2Tag");
-                    backEntries[backIndex] = back2Tag[j]->GetEntries();
-                    backIndex++;
-                }
+            
             if(backString.Contains("SR") && backString.Contains("PostNSubJetsCut")
             && backString.Contains("deltaR")){
                     back2Tag[j] = (TH1*)fileB->Get(backList->At(j)->GetName())->Clone("back2Tag");
                     backEntries[backIndex] = back2Tag[j]->GetEntries();
                     backIndex++;
-                }
-            if(backString.Contains("SR") && backString.Contains("PostEllipseCut")
+            }
+
+                if(backString.Contains("SR") && backString.Contains("PostnBTagTJCut")
             && backString.Contains("deltaR")){
                     back2Tag[j] = (TH1*)fileB->Get(backList->At(j)->GetName())->Clone("back2Tag");
                     backEntries[backIndex] = back2Tag[j]->GetEntries();
@@ -101,19 +104,22 @@ void getData(){
         }
     }
 
-    cout<<endl<<"Comparing with FILE : "<<fileS->GetName()<<endl<<endl;
-    cout<<"Ratio of PreSel_PostDRCut_deltaR : "<<signalEntries[0]/backEntries[0]<<endl;
-    cout<<"Ratio of PreSel_PostDEtaCut_deltaR : "<<signalEntries[1]/backEntries[1]<<endl;
-    cout<<"Ratio of SR_PostnBTagTJCut_deltaR : "<<signalEntries[2]/backEntries[2]<<endl;
-    cout<<"Ratio of SR_PostNSubJetsCut_deltaR : "<<signalEntries[3]/backEntries[3]<<endl;
-    cout<<"Ratio of SR_PostEllipseCut_deltaR : "<<signalEntries[4]/backEntries[4]<<endl;
+    cout<<endl<<"Comparing with FILE => "<<fileS->GetName()<<endl<<endl;
+    cout<<"Ratio of PreSel_PostDEtaCut_deltaR => "<<signalEntries[1]<< " : " << backEntries[1]<< " = " << sqrt(signalEntries[1]/backEntries[1])<<endl;
+    cout<<"Ratio of PreSel_PostDRCut_deltaR => "<<signalEntries[0]<< " : " << backEntries[0]<< " = "  <<sqrt(signalEntries[0]/backEntries[0])<<endl;
+    cout<<"Ratio of SR_PostEllipseCut_deltaR =>"<<signalEntries[4]<< " : " << backEntries[4]<< " = " <<sqrt(signalEntries[4]/backEntries[4])<<endl;
+    cout<<"Ratio of SR_PostNSubJetsCut_deltaR => "<<signalEntries[3]<< " : " << backEntries[3]<< " = "  <<sqrt(signalEntries[3]/backEntries[3])<<endl;
+    cout<<"Ratio of SR_PostnBTagTJCut_deltaR => "<<signalEntries[2]<< " : " << backEntries[2]<< " = "  <<sqrt(signalEntries[2]/backEntries[2])<<endl;
 
     ofstream saveVals ("data.txt");
     if(saveVals){
-    for(int s=0; s<backIndex; s++){
-        saveVals << (signalEntries[s]/backEntries[s]) << endl;
-        }
+        saveVals << sqrt(signalEntries[1]/backEntries[1]) << endl;
+        saveVals << sqrt(signalEntries[0]/backEntries[0]) << endl;
+        saveVals << sqrt(signalEntries[4]/backEntries[4]) << endl;
+        saveVals << sqrt(signalEntries[3]/backEntries[3]) << endl;
+        saveVals << sqrt(signalEntries[2]/backEntries[2]) << endl;
     }
+    saveVals.close();
 
 
         // if(signalString.Contains("0ptag") ){
